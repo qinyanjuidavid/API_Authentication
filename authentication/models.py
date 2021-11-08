@@ -7,6 +7,9 @@ from django.db import models
 from django.db.models.fields import EmailField
 from django.utils.translation import gettext as _
 from todos.helpers.models import TrackingModel
+from django.conf import settings
+import jwt
+from datetime import datetime, timedelta
 
 
 class CustomManager(BaseUserManager):
@@ -100,6 +103,7 @@ class User(AbstractBaseUser, TrackingModel):
 
     @property
     def token(self):
+
         return ''
 
     def has_perm(self, perm, obj=None):
