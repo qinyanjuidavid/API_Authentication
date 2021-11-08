@@ -70,7 +70,8 @@ class User(AbstractBaseUser, TrackingModel):
     is_staff = models.BooleanField(
         _("Staff status"),
         default=False,
-        help_text=_('Designates whether the user can log into this admin panel')
+        help_text=_(
+            'Designates whether the user can log into this admin panel')
     )
     is_active = models.BooleanField(
         _("active"),
@@ -90,7 +91,7 @@ class User(AbstractBaseUser, TrackingModel):
     )
 
     objects = CustomManager()
-    EMAIL_FIELD = 'email'
+    # EMAIL_FIELD = 'email'
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', ]
 
