@@ -29,11 +29,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # 3rd party Apps
+    # 'django_filters',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     # local Apps
     'authentication.apps.AuthenticationConfig',
     'todos.apps.TodosConfig',
+
 
 ]
 AUTH_USER_MODEL = 'authentication.User'
