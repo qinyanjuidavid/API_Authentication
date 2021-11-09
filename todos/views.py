@@ -5,7 +5,8 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from todos.serializers import TodoSerializer
 from todos.models import Todo
-# from django_filters.rest_framework import DjangoFilterBackend
+from django_filters.rest_framework import DjangoFilterBackend
+from todos.filters import TodoFilter
 
 
 @api_view(['GET', 'POST'])
@@ -13,12 +14,18 @@ from todos.models import Todo
 def CreateTodoAPIView(request):
     todoQs = Todo.objects.all()  # filter(owner=request.user)
     if request.method == "GET":
+        filterset = TodoFilter(
+            request.GET, queryset=todoQs)
+        if filterset.is_valid():
+            todoQs = filterset.qs
         serializer = TodoSerializer(todoQs, many=True)
         return Response(serializer.data)
     elif request.method == "POST":
         serializer = TodoSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            serializer.save(owner=request.user)
+            serializer.save(
+                # owner=request.user
+            )
             return Response(serializer.data)
 
 
