@@ -4,5 +4,6 @@ from todos import views
 app_name = 'todos'
 
 urlpatterns = [
-    path('', views.CreateTodoAPIView)
+    path('', views.CreateTodoAPIView),
+    path('<int:id>/', views.TodoDetailAPIView),
 ]
