@@ -9,13 +9,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from todos.filters import TodoFilter
 from rest_framework import pagination
 from django.db.models import Q
-
-
-class StandardResultsSetPagination(pagination.PageNumberPagination):
-    page_size = 3
-    page_query_param = 'page'
-    page_size_query_params = 'per_page'
-    max_page_size = 100000
+from todos.pagination import StandardResultsSetPagination
 
 
 @api_view(['GET', 'POST'])
