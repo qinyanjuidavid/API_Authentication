@@ -7,6 +7,15 @@ from todos.serializers import TodoSerializer
 from todos.models import Todo
 from django_filters.rest_framework import DjangoFilterBackend
 from todos.filters import TodoFilter
+from rest_framework import pagination
+from django.db.models import Q
+
+
+class StandardResultsSetPagination(pagination.PageNumberPagination):
+    page_size = 3
+    page_query_param = 'page'
+    page_size_query_params = 'per_page'
+    max_page_size = 100000
 
 
 @api_view(['GET', 'POST'])
@@ -14,12 +23,25 @@ from todos.filters import TodoFilter
 def CreateTodoAPIView(request):
     todoQs = Todo.objects.all()  # filter(owner=request.user)
     if request.method == "GET":
-        filterset = TodoFilter(
-            request.GET, queryset=todoQs)
-        if filterset.is_valid():
-            todoQs = filterset.qs
-        serializer = TodoSerializer(todoQs, many=True)
-        return Response(serializer.data)
+        # ---> First Filter
+        # filterset = TodoFilter(
+        #     request.GET, queryset=todoQs)
+        # if filterset.is_valid():
+        #     todoQs = filterset.qs
+        if len(todoQs) > 0:
+            query = request.GET.get('q')
+            if query:
+                todoQs = todoQs.filter(
+                    Q(title__icontains=query) |
+                    Q(id__icontains=query) |
+                    Q(description__icontains=query) |
+                    Q(is_complete__icontains=query)
+                )
+            paginator = StandardResultsSetPagination()
+            result_page = paginator.paginate_queryset(todoQs, request)
+
+            serializer = TodoSerializer(result_page, many=True)
+            return paginator.get_paginated_response(serializer.data)
     elif request.method == "POST":
         serializer = TodoSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
