@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from authentication.send_main import send_activation_mail
+from authentication.send_mail import send_activation_mail
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -55,11 +55,16 @@ def authenticatedUser(request):
 class VerifyEmail(generics.GenericAPIView):
     def get(self, request):
         token = request.GET.get('token')
+        print(token)
         try:
-            payload = jwt.decode(token, settings.SECRET_KEY)
+            payload = jwt.decode(
+                token, settings.SECRET_KEY, algorithms="HS256")
             user = User.objects.get(id=payload['user_id'])
+            print("User:::", user)
+
             if not user.email_verified:
                 user.is_active = True
+                user.email_verified = True
                 user.save()
             return Response({'Email': 'Successfully activated'},
                             status=status.HTTP_200_OK
